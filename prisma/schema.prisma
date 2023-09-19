@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs https//pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id String @id @default(cuid())
+
+  email        String         @unique
+  passwordHash String
+  Subscription Subscription[]
+}
+
+model Subscription {
+  id                     Int       @id @default(autoincrement())
+  dateOfFirstPayment     DateTime?
+  dateOfLicenseDelivery  DateTime?
+  dateOfLastMonthFeePaid DateTime?
+  amountPaid             Float?
+  paid                   Boolean?
+  monthlyActive          Boolean?
+  monthlyFee             String?
+  feeDueDate             DateTime?
+  nftDiscount            Boolean?
+  referralDiscount       Boolean?
+  experienced            Boolean?
+  broker                 String?
+  commentsDetails        String?
+  paymentTxHash          String?
+  channelID              String?
+  categoryID             String?
+  // Define the relationship with the User table
+ 
+  user   User @relation(fields: [userID], references: [id])
+  userID String
+  @@index([userID])
+  License                License[]
+}
+
+model License {
+  id             Int          @id @default(autoincrement())
+  subscription   Subscription @relation(fields: [subscriptionID], references: [id])
+  @@index([subscriptionID])
+  subscriptionID Int
+  account        Int?
+  licenseNumber  Int?
+  ticketNumber   Int?
+}

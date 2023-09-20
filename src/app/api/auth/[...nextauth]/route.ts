@@ -79,6 +79,7 @@ export const authOptions: AuthOptions = {
         strategy: 'jwt',
         maxAge: 30 * 24 * 60 * 60,
         updateAge: 24 * 60 * 60,
+    
     },
     callbacks: {
         async session(params: {session: Session; token: JWT; user: User}) {

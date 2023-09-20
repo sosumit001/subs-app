@@ -46,11 +46,12 @@ const SignInForm = () => {
     }, [status]);
 
     return (
-        <div className='flex flex-col gap-4 bg-gray-400 p-4'>
-            <input type='text' value={email} onChange={(e) => setEmail(e.target.value)} />
-            <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+        <div className=' border-2 min-w-[350px] w-[40%] m-auto rounded-md bg-zinc-50 shadow-md flex p-4 flex-col gap-4 absolute translate-x-[-50%] translate-y-[-50%] left-[50%] top-[50%]'>
+            <input className='rounded-md border-2 w-[300px] h-[50px] m-auto p-2'  type='text' value={email} onChange={(e) => setEmail(e.target.value)} placeholder='username' />
+            <input className='rounded-md border-2 w-[300px] m-auto h-[50px] p-2' type='password' value={password} placeholder='password'
+             onChange={(e) => setPassword(e.target.value)} />
 
-            <button onClick={handleSubmit}>Sign in</button>
+            <button className='p-2 bg-black text-white w-[100px] rounded-md m-auto' onClick={handleSubmit}>Sign in</button>
 
             <p>{message}</p>
         </div>

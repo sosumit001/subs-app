@@ -7,9 +7,10 @@ const Navbar = async () => {
     const session = await getServerSession(authOptions);
 
     return (
-        <div className='w-full px-4 py-8 bg-gray-300 flex flex-row items-center gap-4'>
-            <Link href='/'>Home</Link>
-            <Link href='/protected/dashboard'>Dashboard</Link>
+        <nav className='max-w-5xl m-auto w-full px-4 py-4 flex justify-between font-bold text-base'>
+         <Link href='/'>Logo</Link>
+         <div className='flex gap-4 items-center text-sm font-semibold'>
+            <Link className='flex gap-1 bg-violet-600 text-white p-4 rounded-lg' href='/dashboard'>Dashboard</Link>
 
             {session && session.user?.email ? (
                 <>
@@ -24,7 +25,8 @@ const Navbar = async () => {
                     <Link href='/auth/signup'>Sign up</Link>
                 </>
             )}
-        </div>
+            </div>
+        </nav>
     );
 };
 

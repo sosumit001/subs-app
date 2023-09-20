@@ -12,16 +12,18 @@ const ProtectedLayout = async ({children}: ProtectedLayoutProps) => {
 
     if(!session || !session.user?.email) {
         return (
-            <div>
+            <div className='max-w-5xl p-4 m-auto w-full'>
                 This is protected and you do not have access to it.
             </div>
         )
     }
 
   return (
-    <>
+
+      <div className='max-w-5xl p-4 m-auto w-full'>
         {children}
-    </>
+      </div>
+
   );
 }
 

@@ -19,6 +19,38 @@ model User {
   Subscription Subscription[]
 }
 
+model Staff {
+  id String @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  isAdmin Boolean
+}
+
+model Products {
+  id                     Int       @id @default(autoincrement())
+  name String
+  description String?
+  licensePrice Float
+  categories ProductCategory[]
+  mlSemiAnnual Float?
+  mlYearly Float?
+  referral Float?
+}
+model ProductCategory {
+  id                     Int       @id @default(autoincrement())
+  name String
+  oneMonthPrice Float?
+  threeMonthPrice Float?
+  sixMonthPrice Float?
+  OneYearPirce Float?
+  product   Products @relation(fields: [productID], references: [id])
+  productID Int
+  @@index([productID])
+}
+
+
+
+
 model Subscription {
   id                     Int       @id @default(autoincrement())
   dateOfFirstPayment     DateTime?

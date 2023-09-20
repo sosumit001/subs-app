@@ -36,20 +36,18 @@ model Products {
   mlYearly Float?
   referral Float?
 }
+
 model ProductCategory {
   id                     Int       @id @default(autoincrement())
   name String
   oneMonthPrice Float?
   threeMonthPrice Float?
   sixMonthPrice Float?
-  OneYearPirce Float?
+  OneYearPrice Float?
   product   Products @relation(fields: [productID], references: [id])
   productID Int
   @@index([productID])
 }
-
-
-
 
 model Subscription {
   id                     Int       @id @default(autoincrement())

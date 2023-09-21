@@ -48,7 +48,7 @@ function Page() {
         }
     )
     console.log(form)
-    
+
     useEffect(() => {
         // Ensure checkboxesRef.current is not null before accessing it
         if (checkboxesRef.current) {
@@ -153,7 +153,7 @@ function Page() {
                     {sub_plans[categoryType]?.map((item, key) => (
                         <div className='flex' key={key}>
                             <label className='mr-2' htmlFor={time[key]}>{time[key]}: ${item} </label>
-                            <input ref={(el) => checkboxesRef.current[key] = el} className='border-2  ' type="checkbox" key={`${time[key]}-${categoryType}`} id={time[key]} onChange={(e) => handleCheckboxChange(key, e.target.checked)} />
+                            <input ref={(el: HTMLInputElement | null) => checkboxesRef.current[key] = el} className='border-2  ' type="checkbox" key={`${time[key]}-${categoryType}`} id={time[key]} onChange={(e) => handleCheckboxChange(key, e.target.checked)} />
                         </div>
                     ))}
 

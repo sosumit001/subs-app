@@ -1,10 +1,25 @@
+'use client'
+
 import { Plus } from "lucide-react"
 import Link from 'next/link'
+import { useEffect } from "react"
 import { getProducts } from "../actions/getProduct/getProduct"
 
-const DashboardPage = async() => {
-  const products = await getProducts();
-  console.log(products)
+const DashboardPage =  () => {
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const products = await getProducts();
+        console.log('Fetched products:', products);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    }
+
+    fetchProducts();
+  }, []);
+
   return (
     <>
       <div className="h-screen">
@@ -23,6 +38,7 @@ const DashboardPage = async() => {
         <div className="flex gap-4 justify-between">
           <div className="overflow-y-scroll h-[100px] w-[50%]">
             Users
+           
             <div>user1</div>
             <div>user1</div>
             <div>user1</div>

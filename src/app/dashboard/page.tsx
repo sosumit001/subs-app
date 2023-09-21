@@ -1,16 +1,18 @@
 'use client'
 
-import { Plus } from "lucide-react"
+import { Plus, Trash2 } from "lucide-react"
 import Link from 'next/link'
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { getProducts } from "../actions/getProduct/getProduct"
 
 const DashboardPage =  () => {
+  const [products, setProducts] = useState<any[]>([])
 
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const products = await getProducts();
+        const res = await getProducts();
+        setProducts(res)
         console.log('Fetched products:', products);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -35,38 +37,20 @@ const DashboardPage =  () => {
           </div>
         </div>
 
-        <div className="flex gap-4 justify-between">
-          <div className="overflow-y-scroll h-[100px] w-[50%]">
+        <div className="flex gap-4 justify-between border-2 my-4">
+          <div className="overflow-y-scroll h-[500px] w-[50%] p-4">
             Users
            
-            <div>user1</div>
-            <div>user1</div>
-            <div>user1</div>
-            <div>user1</div>
-            <div>user1</div>
-            <div>user1</div>
-            <div>user1</div>
-            <div>user1</div>
-            <div>user1</div>
-            <div>user1</div>
-            <div>user1</div>
-            <div>user1</div>
-          </div>
-          <div className="overflow-y-scroll h-[100px] w-[50%] ">
-            Products
-            <div>product</div>
-            <div>product</div>
-            <div>product</div>
-            <div>product</div>
-            <div>product</div>
-            <div>product</div>
-            <div>product</div>
-            <div>product</div>
-            <div>product</div>
-            <div>product</div>
-            <div>product</div>
-            <div>product</div>
+            <div className="p-4 border-2 shadow-md rounded-md">user1</div>
 
+
+          </div>
+          <div className="overflow-y-scroll h-[500px] w-[50%] p-4 ">
+            Products
+            {products?.map((item, key)=>{
+              return <div key={key} className="flex mb-2 justify-between p-4 border-2 shadow-md rounded-md"><Link href={'/products'}>{item.name}</Link> <Trash2 className="cursor-pointer" color='grey' size={20} /> </div>
+               
+            })}
           </div>
 
         </div>

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { sub_plans } from './prices'
+import { addProduct } from '@/app/actions/addProduct/addProduct'
 
 
 const categories = ['A / A-ML', 'B / B-ML', 'C / C-ML', 'D / D-ML', 'E / E-ML', 'F / F-ML']
@@ -113,7 +114,8 @@ function Page() {
 
         if (form.name && form.licensePrice && form.mlYearly) {
             // Add logic to submit form data (e.g., send a request to your backend)
-            console.log('Form submitted:', form);
+            const product = await addProduct(form)
+            console.log('product created in db is : ',product)
         } else {
             alert('Please fill out the required fields.');
         }
@@ -137,7 +139,7 @@ function Page() {
                 <div className='flex flex-col'>
                     <label className=''>license Price: </label>
                     <div>
-                        <input onChange={(e) => setForm({ ...form, licensePrice: parseInt(e.target.value )})} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' max={10} min={1} required />$
+                        <input onChange={(e) => setForm({ ...form, licensePrice: parseFloat(e.target.value)})} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' max={10} min={1} required />$
                     </div>
                 </div>
                 <hr />
@@ -176,19 +178,19 @@ function Page() {
                     <div className='flex flex-col'>
                         <label className=''>ML-Semi Annual Discount: </label>
                         <div>
-                            <input onChange={(e) => setForm({ ...form, mlSemiAnnual: parseInt(e.target.value )})} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' max={10} min={1} required />$
+                            <input onChange={(e) => setForm({ ...form, mlSemiAnnual: parseFloat(e.target.value) })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' max={10} min={1} required />$
                         </div>
                     </div>
                     <div className='flex flex-col'>
                         <label className=''>ML Yearly Discount: </label>
                         <div>
-                            <input onChange={(e) => setForm({ ...form, mlYearly: parseInt(e.target.value )})} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' required />$
+                            <input onChange={(e) => setForm({ ...form, mlYearly: parseFloat(e.target.value) })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' required />$
                         </div>
                     </div>
                     <div className='flex flex-col'>
                         <label className=''>Referral: </label>
                         <div>
-                            <input onChange={(e) => setForm({ ...form, referral: parseInt(e.target.value) })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' required />$
+                            <input onChange={(e) => setForm({ ...form, referral: parseFloat(e.target.value) })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' required />$
                         </div>
                     </div>
 

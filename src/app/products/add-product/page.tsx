@@ -6,11 +6,29 @@ import { sub_plans } from './prices'
 const categories = ['A / A-ML', 'B / B-ML', 'C / C-ML', 'D / D-ML', 'E / E-ML', 'F / F-ML']
 const time = ['1month', '3month', 'semi-annual', 'yearly']
 
+interface AddCategoryItem {
+    name: string;
+    oneMonthPrice: number | null;
+    threeMonthPrice: number | null;
+    sixMonthPrice: number | null;
+    OneYearPrice: number | null;
+}
+
+interface Form {
+    name: string;
+    description: string;
+    licensePrice: number | null;
+    categories: string[]; // Assuming categories are strings
+    mlSemiAnnual: number | null;
+    mlYearly: number | null;
+    referral: number | null;
+}
+
 function Page() {
     const [toggle, setToggle] = useState<boolean>(false)
     const [categoryType, setCategoryType] = useState<string>('options')
-    const checkboxesRef = useRef([]);
-    const [form, setForm] = useState<any>({
+    const checkboxesRef = useRef<(HTMLInputElement[]  | null)>([]);
+    const [form, setForm] = useState<Form>({
         name: '',
         description: '',
         licensePrice: null,
@@ -20,7 +38,7 @@ function Page() {
         referral: null
     })
     const [addCategory, setAddCategory] = useState<any>([])
-    const [addCategoryItems, setAddCategoryItems] = useState<any>(
+    const [addCategoryItems, setAddCategoryItems] = useState<AddCategoryItem>(
         {
             name: '',
             oneMonthPrice: null,
@@ -30,12 +48,17 @@ function Page() {
         }
     )
     console.log(form)
+    
     useEffect(() => {
-        // Reset addCategoryItems when categoryType changes
-        checkboxesRef.current.forEach(checkbox => {
-            checkbox.checked = false;
-        });
-    }, [categoryType]);
+        // Ensure checkboxesRef.current is not null before accessing it
+        if (checkboxesRef.current) {
+          checkboxesRef.current.forEach((checkbox: HTMLInputElement | null) => {
+            if (checkbox && checkbox.checked) {
+              checkbox.checked = false;
+            }
+          });
+        }
+      }, [categoryType]);
 
     const handleCheckboxChange = (key: any, checked: any) => {
         const price = sub_plans[categoryType][key];
@@ -83,7 +106,7 @@ function Page() {
         });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         setForm({ ...form, categories: addCategory })
@@ -94,15 +117,10 @@ function Page() {
         } else {
             alert('Please fill out the required fields.');
         }
-
-
-        // try{
-        //        const res = await fetch('/api/createProduct', {method: 'POST'})
-        // }
     }
 
     const handleAddCategory = () => {
-        setAddCategory(prevCategory => [...prevCategory, { ...addCategoryItems }])
+        setAddCategory((prevCategory: any[]) => [...prevCategory, { ...addCategoryItems }])
     }
 
     return (
@@ -119,7 +137,7 @@ function Page() {
                 <div className='flex flex-col'>
                     <label className=''>license Price: </label>
                     <div>
-                        <input onChange={(e) => setForm({ ...form, licensePrice: e.target.value })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' max={10} min={1} required />$
+                        <input onChange={(e) => setForm({ ...form, licensePrice: parseInt(e.target.value )})} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' max={10} min={1} required />$
                     </div>
                 </div>
                 <hr />
@@ -135,7 +153,7 @@ function Page() {
                     {sub_plans[categoryType]?.map((item, key) => (
                         <div className='flex' key={key}>
                             <label className='mr-2' htmlFor={time[key]}>{time[key]}: ${item} </label>
-                            <input ref={el => checkboxesRef.current[key] = el} className='border-2  ' type="checkbox" key={`${time[key]}-${categoryType}`} id={time[key]} onChange={(e) => handleCheckboxChange(key, e.target.checked)} />
+                            <input ref={(el) => checkboxesRef.current[key] = el} className='border-2  ' type="checkbox" key={`${time[key]}-${categoryType}`} id={time[key]} onChange={(e) => handleCheckboxChange(key, e.target.checked)} />
                         </div>
                     ))}
 
@@ -148,7 +166,7 @@ function Page() {
 
                     <div>
                         {addCategory?.length > 0 && <div className='border-2 p-2'>
-                            {addCategory?.map((item, key) => {
+                            {addCategory?.map((item: AddCategoryItem, key: number) => {
                                 return <span className='bg-black text-white p-2 mr-2 rounded-md' key={key}>{item.name}</span>
                             })}
 
@@ -156,21 +174,21 @@ function Page() {
                     </div>
                     <hr />
                     <div className='flex flex-col'>
-                        <label className=''>ML-Semi Annual: </label>
+                        <label className=''>ML-Semi Annual Discount: </label>
                         <div>
-                            <input onChange={(e) => setForm({ ...form, mlSemiAnnual: e.target.value })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' max={10} min={1} required />$
+                            <input onChange={(e) => setForm({ ...form, mlSemiAnnual: parseInt(e.target.value )})} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' max={10} min={1} required />$
                         </div>
                     </div>
                     <div className='flex flex-col'>
-                        <label className=''>ML Yearly: </label>
+                        <label className=''>ML Yearly Discount: </label>
                         <div>
-                            <input onChange={(e) => setForm({ ...form, mlYearly: e.target.value })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' required />$
+                            <input onChange={(e) => setForm({ ...form, mlYearly: parseInt(e.target.value )})} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' required />$
                         </div>
                     </div>
                     <div className='flex flex-col'>
                         <label className=''>Referral: </label>
                         <div>
-                            <input onChange={(e) => setForm({ ...form, referral: e.target.value })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' required />$
+                            <input onChange={(e) => setForm({ ...form, referral: parseInt(e.target.value) })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' required />$
                         </div>
                     </div>
 

@@ -1,7 +1,10 @@
 import { Plus } from "lucide-react"
 import Link from 'next/link'
+import { getProducts } from "../actions/getProduct/getProduct"
 
-const DashboardPage = () => {
+const DashboardPage = async() => {
+  const products = await getProducts();
+  console.log(products)
   return (
     <>
       <div className="h-screen">

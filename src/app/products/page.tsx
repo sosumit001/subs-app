@@ -29,12 +29,12 @@ function page() {
   const [selectedProduct, setSelectedProduct] = useState<any>({})
   const [category, setCategory] = useState<string>('options')
   const [products, setProducts] = useState<any[]>([])
-  const [toPass, setToPass] = useState<any>({
-    duration: '',
-    licensePrice: 0,
-    name: '',
-    durationPrice: 0
-  })
+  // const [toPass, setToPass] = useState<any>({
+  //   duration: '',
+  //   licensePrice: 0,
+  //   name: '',
+  //   durationPrice: 0
+  // })
 
   useEffect(() => {
     async function fetchProducts() {
@@ -84,7 +84,7 @@ function page() {
                 if (item.name == category)
                   return Object.entries(item).map(([k, v]: [k: string, v: any]) => {
                     if (k !== 'id' && k !== 'productID' && k !== 'name'){
-                      return <Card toPass={toPass} licensePrice ={selectedProduct.licensePrice} name={selectedProduct.name} setToPass={setToPass} key={v} time={PassSelectedItem(k)} price={v} />
+                      return <Card licensePrice ={selectedProduct.licensePrice} name={selectedProduct.name} key={v} time={PassSelectedItem(k)} price={v} />
                       
                     } 
 

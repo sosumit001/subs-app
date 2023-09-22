@@ -52,9 +52,6 @@ function Page() {
         }
     )
 
-
-    console.log(form)
-
     useEffect(() => {
         // Ensure checkboxesRef.current is not null before accessing it
         if (checkboxesRef.current) {

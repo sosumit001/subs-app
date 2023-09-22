@@ -1,13 +1,19 @@
+'use client'
+
+import {useRouter} from 'next/navigation'
 
 function page(props) {
+  const router = useRouter();
+     console.log(router.query) ;
+    // console.log(data)
   return (
     <div className="border-2 rounded-md p-8 shadow-md w-[500px] h-[400px] absolute translate-x-[-50%] translate-y-[-50%] left-[50%] top-[50%] flex flex-col gap-4">
 
-      <div>{props.name} EditorX</div>
+      <div>{props.name}</div>
       <hr />
-      <div className="flex justify-between"><span>Subscription</span><span className="p-2 bg-black text-white rounded-md">billed monthly</span></div>
+      <div className="flex justify-between"><span>Subscription</span>{}<span className="p-2 bg-black text-white rounded-md">billed monthly</span></div>
 
-      <div className="flex justify-between">{props.duration} <span>duration</span ><span className="p-2 bg-black text-white rounded-md">6 month</span></div>
+      <div className="flex justify-between"> <span>duration</span ><span className="p-2 bg-black text-white rounded-md">{props.duration}</span></div>
       <div>
         <span >Licence</span>
         <select className="border-2 rounded-md p-2 ml-2" name="" id="">

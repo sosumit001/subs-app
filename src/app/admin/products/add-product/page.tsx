@@ -114,11 +114,11 @@ function Page() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("addCategory", addCategory, [...addCategory])
 
-        setForm({ ...form, categories: addCategory })
-
-        if (form.name && form.licensePrice && form.mlYearly) {
+        if (form.name && form.licensePrice && form.mlYearly && form?.categories?.length>0) {
             setLoader("...")
+            console.log("form", form)
             // Add logic to submit form data (e.g., send a request to your backend)
             const product = await addProduct(form)
             console.log('product created in db is : ', product)
@@ -131,10 +131,10 @@ function Page() {
     }
 
     const handleAddCategory = () => {
-        if(addCategoryItems.oneMonthPrice && addCategoryItems.OneYearPrice && addCategoryItems.sixMonthPrice && addCategoryItems.threeMonthPrice){
+        if (addCategoryItems.oneMonthPrice && addCategoryItems.OneYearPrice && addCategoryItems.sixMonthPrice && addCategoryItems.threeMonthPrice) {
             setAddCategory((prevCategory: any[]) => [...prevCategory, { ...addCategoryItems }])
         }
-        else{
+        else {
             alert('Please fill out the required fields.')
         }
     }
@@ -206,7 +206,7 @@ function Page() {
                     <div className='flex flex-col'>
                         <label className=''>ML-Semi Annual Discount: </label>
                         <div>
-                            <input onChange={(e) => setForm({ ...form, mlSemiAnnual: parseFloat(e.target.value) })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number'  required />$
+                            <input onChange={(e) => setForm({ ...form, mlSemiAnnual: parseFloat(e.target.value) })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' required />$
                         </div>
                     </div>
                     <div className='flex flex-col'>
@@ -224,9 +224,15 @@ function Page() {
 
                 </div>
 
-                <button className='px-4 py-2 bg-black text-white rounded' onClick={(e) => handleSubmit(e)}>{loader}</button>
-            </form>
-        </div>
+                <button type='button' className='px-4 py-2 border-2 rounded' onClick={() => setForm(prevForm => ({
+                    ...prevForm,
+                    categories: [...addCategory]
+                }))}>Done</button>
+
+            <button className='px-4 py-2 bg-black text-white rounded' onClick={(e) => handleSubmit(e)}>{loader}</button>
+
+        </form>
+        </div >
     )
 }
 

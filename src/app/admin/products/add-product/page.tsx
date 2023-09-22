@@ -2,10 +2,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { sub_plans } from './prices'
 import { addProduct } from '@/app/actions/addProduct/addProduct'
+import { useRouter } from 'next/navigation'
 
 
 const categories = ['A / A-ML', 'B / B-ML', 'C / C-ML', 'D / D-ML', 'E / E-ML', 'F / F-ML']
 const time = ['1month', '3month', 'semi-annual', 'yearly']
+const durationName = ['oneMonthPrice', 'threeMonthPrice', 'sixMonthPrice', 'oneYearPrice']
 
 interface AddCategoryItem {
     name: string;
@@ -26,9 +28,10 @@ interface Form {
 }
 
 function Page() {
-    const [toggle, setToggle] = useState<boolean>(false)
+    const router = useRouter()
+    const [loader, setLoader] = useState<string>('Add Product')
     const [categoryType, setCategoryType] = useState<string>('options')
-    const checkboxesRef = useRef<(HTMLInputElement[]  | null)>([]);
+    const checkboxesRef = useRef<(HTMLInputElement[] | null)>([]);
     const [form, setForm] = useState<Form>({
         name: '',
         description: '',
@@ -48,18 +51,20 @@ function Page() {
             OneYearPrice: null
         }
     )
+
+
     console.log(form)
 
     useEffect(() => {
         // Ensure checkboxesRef.current is not null before accessing it
         if (checkboxesRef.current) {
-          checkboxesRef.current.forEach((checkbox: HTMLInputElement | null) => {
-            if (checkbox && checkbox.checked) {
-              checkbox.checked = false;
-            }
-          });
+            checkboxesRef.current.forEach((checkbox: HTMLInputElement | null) => {
+                if (checkbox && checkbox.checked) {
+                    checkbox.checked = false;
+                }
+            });
         }
-      }, [categoryType]);
+    }, [categoryType]);
 
     const handleCheckboxChange = (key: any, checked: any) => {
         const price = sub_plans[categoryType][key];
@@ -113,16 +118,25 @@ function Page() {
         setForm({ ...form, categories: addCategory })
 
         if (form.name && form.licensePrice && form.mlYearly) {
+            setLoader("...")
             // Add logic to submit form data (e.g., send a request to your backend)
             const product = await addProduct(form)
-            console.log('product created in db is : ',product)
+            console.log('product created in db is : ', product)
+            alert('Product added successfully')
+            setLoader('Add Product')
+            router.push('/admin/dashboard')
         } else {
             alert('Please fill out the required fields.');
         }
     }
 
     const handleAddCategory = () => {
-        setAddCategory((prevCategory: any[]) => [...prevCategory, { ...addCategoryItems }])
+        if(addCategoryItems.oneMonthPrice && addCategoryItems.OneYearPrice && addCategoryItems.sixMonthPrice && addCategoryItems.threeMonthPrice){
+            setAddCategory((prevCategory: any[]) => [...prevCategory, { ...addCategoryItems }])
+        }
+        else{
+            alert('Please fill out the required fields.')
+        }
     }
 
     return (
@@ -137,27 +151,41 @@ function Page() {
                     <textarea onChange={(e) => setForm({ ...form, description: e.target.value })} className='border-2 rounded-md p-2 max-w-[80%]' typeof='text' id='description' />
                 </div>
                 <div className='flex flex-col'>
-                    <label className=''>license Price: </label>
+                    <label className=''>License Price: </label>
                     <div>
-                        <input onChange={(e) => setForm({ ...form, licensePrice: parseFloat(e.target.value)})} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' max={10} min={1} required />$
+                        <input onChange={(e) => setForm({ ...form, licensePrice: parseFloat(e.target.value) })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' required />$
                     </div>
                 </div>
                 <hr />
                 <div className='flex flex-col'>
                     <label htmlFor="category">Category</label>
-                    <select onChange={(e) => { setToggle(true); setCategoryType(e.target.value); setAddCategoryItems({ ...addCategoryItems, name: e.target.value }) }} className='border-2 rounded-md p-2 max-w-[200px]' >
+                    <select onChange={(e) => { setCategoryType(e.target.value); setAddCategoryItems({ ...addCategoryItems, name: e.target.value }) }} className='border-2 rounded-md p-2 max-w-[200px]' >
                         <option value=""></option>
                         {categories.map((item, key) => <option key={key} className='border-2 bg-slate-100' value={item}>{item}</option>)}
                     </select>
                 </div>
 
                 <div>
-                    {sub_plans[categoryType]?.map((item, key) => (
-                        <div className='flex' key={key}>
-                            <label className='mr-2' htmlFor={time[key]}>{time[key]}: ${item} </label>
-                            <input ref={(el: HTMLInputElement | null) => checkboxesRef.current[key] = el} className='border-2  ' type="checkbox" key={`${time[key]}-${categoryType}`} id={time[key]} onChange={(e) => handleCheckboxChange(key, e.target.checked)} />
+                    <div className='flex flex-col gap-2'>
+                        <div className='flex items-center'>
+                            <label className='mr-2' htmlFor='1'>1 month:</label>
+                            <input className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' id='1' onChange={(e) => setAddCategoryItems({ ...addCategoryItems, oneMonthPrice: parseFloat(e.target.value) })} />$
                         </div>
-                    ))}
+                        <div className='flex items-center'>
+                            <label className='mr-2' htmlFor='3'>3 months:</label>
+                            <input className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' id='3' onChange={(e) => setAddCategoryItems({ ...addCategoryItems, threeMonthPrice: parseFloat(e.target.value) })} />$
+                        </div>
+                        <div className='flex items-center'>
+                            <label className='mr-2' htmlFor='6'>6 months:</label>
+                            <input className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' id='6' onChange={(e) => setAddCategoryItems({ ...addCategoryItems, sixMonthPrice: parseFloat(e.target.value) })} />$
+                        </div>
+                        <div className='flex items-center'>
+                            <label className='mr-2' htmlFor='12'>1 year:</label>
+                            <input className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' id='12' onChange={(e) => setAddCategoryItems({ ...addCategoryItems, OneYearPrice: parseFloat(e.target.value) })} />$
+                        </div>
+
+                    </div>
+
 
                     <button
                         type='button'
@@ -178,7 +206,7 @@ function Page() {
                     <div className='flex flex-col'>
                         <label className=''>ML-Semi Annual Discount: </label>
                         <div>
-                            <input onChange={(e) => setForm({ ...form, mlSemiAnnual: parseFloat(e.target.value) })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number' max={10} min={1} required />$
+                            <input onChange={(e) => setForm({ ...form, mlSemiAnnual: parseFloat(e.target.value) })} className='border-2 mr-2 rounded-md p-2 max-w-[100px]' type='number'  required />$
                         </div>
                     </div>
                     <div className='flex flex-col'>
@@ -196,7 +224,7 @@ function Page() {
 
                 </div>
 
-                <button onClick={(e) => handleSubmit(e)}>Add Product</button>
+                <button className='px-4 py-2 bg-black text-white rounded' onClick={(e) => handleSubmit(e)}>{loader}</button>
             </form>
         </div>
     )

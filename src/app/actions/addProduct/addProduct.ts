@@ -2,7 +2,10 @@
 import prisma from "@/app/lib/prisma"
 
 export async function addProduct (obj: any) {
+    
     const {name, description, licensePrice, categories, mlSemiAnnual, mlYearly, referral} = obj;
+  
+    console.log('categories: ',categories)
     const product = await prisma.products.create({
         data : {
             name,
@@ -17,11 +20,13 @@ export async function addProduct (obj: any) {
                     oneMonthPrice: category.oneMonthPrice,
                     threeMonthPrice: category.threeMonthPrice,
                     sixMonthPrice: category.sixMonthPrice,
-                    OneYearPrice: category.OneYearPrice
+                    OneYearPrice: category.OneYearPrice,
                 }))
             }
         }
     });
+
+
 
     return product;
 }

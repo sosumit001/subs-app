@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { sub_plans } from './prices'
 import { addProduct } from '@/app/actions/addProduct/addProduct'
 import { useRouter } from 'next/navigation'
+import { Check } from 'lucide-react'
 
 
 const categories = ['A / A-ML', 'B / B-ML', 'C / C-ML', 'D / D-ML', 'E / E-ML', 'F / F-ML']
@@ -29,6 +30,7 @@ interface Form {
 
 function Page() {
     const router = useRouter()
+    const [toggle, setToggle] = useState<boolean>(false)
     const [loader, setLoader] = useState<string>('Add Product')
     const [categoryType, setCategoryType] = useState<string>('options')
     const checkboxesRef = useRef<(HTMLInputElement[] | null)>([]);
@@ -113,19 +115,29 @@ function Page() {
         e.preventDefault();
         console.log("addCategory", addCategory, [...addCategory])
 
-        if (form.name && form.licensePrice && form.mlYearly && form?.categories?.length>0) {
+        if (form.name && form.licensePrice && form.mlYearly && form?.categories?.length > 0) {
             setLoader("...")
             console.log("form", form)
             // Add logic to submit form data (e.g., send a request to your backend)
-            const product = await addProduct(form)
-            console.log('product created in db is : ', product)
-            alert('Product added successfully')
-            setLoader('Add Product')
-            router.push('/admin/dashboard')
+            try {
+                const product = await addProduct(form)
+                console.log('product created in db is : ', product)
+                alert('Product added successfully')
+                setLoader('Add Product')
+                router.push('/admin/dashboard')
+            }
+            catch (err) {
+                setLoader('Add Product')
+                alert('something went wrong. Try again')
+            }
         } else {
             alert('Please fill out the required fields.');
         }
     }
+
+    const handleRemoveCategory = (index: number) => {
+        setAddCategory((prevCategory: any) => prevCategory.filter((_: any, i: number) => i !== index));
+    };
 
     const handleAddCategory = () => {
         if (addCategoryItems.oneMonthPrice && addCategoryItems.OneYearPrice && addCategoryItems.sixMonthPrice && addCategoryItems.threeMonthPrice) {
@@ -136,16 +148,18 @@ function Page() {
         }
     }
 
+    console.log(form, 'form')
     return (
         <div className="max-w-5xl m-auto p-4 h-full">
+            <div className='text-center font-bold'>Add Product</div>
             <form className='w-[60%] m-auto border-2 p-8 rounded-md flex flex-col gap-4' >
-                <div className='flex flex-col'>
+                <div className='flex flex-col '>
                     <label htmlFor='name'>Name: </label>
                     <input onChange={(e) => setForm({ ...form, name: e.target.value })} className='border-2 rounded-md p-2 max-w-[200px]' id='name' type="text" name="" placeholder='name' required />
                 </div>
                 <div className='flex flex-col'>
                     <label id='description'>Description: </label>
-                    <textarea onChange={(e) => setForm({ ...form, description: e.target.value })} className='border-2 rounded-md p-2 max-w-[80%]' typeof='text' id='description' />
+                    <textarea onChange={(e) => setForm({ ...form, description: e.target.value })} className='border-2 rounded-md p-2 max-w-[80%]' placeholder='description' typeof='text' id='description' />
                 </div>
                 <div className='flex flex-col'>
                     <label className=''>License Price: </label>
@@ -194,9 +208,18 @@ function Page() {
                     <div>
                         {addCategory?.length > 0 && <div className='border-2 p-2'>
                             {addCategory?.map((item: AddCategoryItem, key: number) => {
-                                return <span className='bg-black text-white p-2 mr-2 rounded-md' key={key}>{item.name}</span>
+                                return (
+                                    <div className="inline-flex items-center bg-black text-white p-2 mr-2 rounded-md" key={key}>
+                                        <span>{item.name}</span>
+                                        <button
+                                            className="ml-2"
+                                            onClick={() => handleRemoveCategory(key)}
+                                        >
+                                            &#10005;
+                                        </button>
+                                    </div>
+                                );
                             })}
-
                         </div>}
                     </div>
                     <hr />
@@ -221,14 +244,23 @@ function Page() {
 
                 </div>
 
-                <button type='button' className='px-4 py-2 border-2 rounded' onClick={() => setForm(prevForm => ({
-                    ...prevForm,
-                    categories: [...addCategory]
-                }))}>Done</button>
+                <button type='button' className='hover:text-white transition-[.3] hover:bg-black px-4 py-2 border-2 rounded flex justify-center items-center'
+                    onClick={() => {
+                        if (form?.categories?.length > 0) {
+                            setToggle(true);
+                        }
+                        else alert('fill the required fields');
 
-            <button className='px-4 py-2 bg-black text-white rounded' onClick={(e) => handleSubmit(e)}>{loader}</button>
+                        return setForm(prevForm => ({
+                            ...prevForm,
+                            categories: [...addCategory]
+                        }))
+                    }
+                    }>Done {toggle && <Check size={15} />}</button>
 
-        </form>
+                {toggle && <button className='px-4 py-2 bg-black text-white rounded' onClick={(e) => handleSubmit(e)}>{loader}</button>}
+
+            </form>
         </div >
     )
 }

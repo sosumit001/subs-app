@@ -1,11 +1,35 @@
 'use client'
 
 import { useGlobalContext } from '@/app/Context/store';
+import { useState } from 'react';
+import  getCheckout from '@/app/actions/getCheckoutUrl/getCheckout';
 
 function page(props) {
-  const {toPass} = useGlobalContext()
+  const [loading,setLoading] = useState(false)
+  const { toPass } = useGlobalContext()
   console.log(toPass)
-    // console.log(data)
+
+  const onSubscribe = async () => {
+
+    const res = await getCheckout()
+    console.log(res)
+      window.location.href = res;
+
+
+    // const res = await getCheckout()
+    // console.log(res)
+    // try {
+    //   setLoading(true);
+    //   const response = await axios.get("/api/stripe");
+    //   window.location.href = response.data.url;
+    // } catch (error) {
+    //  console.log("error", error)
+    // } finally {
+    //   setLoading(false);
+    // }
+  }
+
+  // console.log(data)
   return (
     <div className="border-2 rounded-md p-8 shadow-md w-[500px] h-[400px] absolute translate-x-[-50%] translate-y-[-50%] left-[50%] top-[50%] flex flex-col gap-4">
 
@@ -29,7 +53,7 @@ function page(props) {
         <span>subtotal</span>
       </div>
 
-      <button className="p-2 w-[100%] bg-black text-white rounded-md" >Checkout</button>
+      <button className="p-2 w-[100%] bg-black text-white rounded-md" disabled={loading} onClick={onSubscribe}>Checkout</button>
 
     </div>
   )

@@ -29,12 +29,6 @@ function page() {
   const [selectedProduct, setSelectedProduct] = useState<any>({})
   const [category, setCategory] = useState<string>('options')
   const [products, setProducts] = useState<any[]>([])
-  // const [toPass, setToPass] = useState<any>({
-  //   duration: '',
-  //   licensePrice: 0,
-  //   name: '',
-  //   durationPrice: 0
-  // })
 
   useEffect(() => {
     async function fetchProducts() {
@@ -74,12 +68,9 @@ function page() {
             billed-monthly
           </div>
 
-          <div className="overflow-hidden rounded-md bg-zinc-100">
-            <div className='flex gap-8 items-center h-[70vh] w-[100%] overflow-x-scroll p-4'>
-              {
+          <div className="overflow-hidden rounded-md">
 
-              }
-
+          {selectedProduct?.name ?  <div className='flex gap-8 items-center h-[70vh] w-[100%] overflow-x-scroll p-4'>
               {selectedProduct?.name && selectedProduct?.categories?.map((item: any, i: number) => {
                 if (item.name == category)
                   return Object.entries(item).map(([k, v]: [k: string, v: any]) => {
@@ -91,10 +82,12 @@ function page() {
                   })
               }
               )}
-
-
-
-            </div>
+            </div>: 
+            <>
+            <div>Select from Product</div>
+            <div>Then Select the category list</div>
+            
+            </>}
           </div>
 
         </div>
@@ -103,9 +96,12 @@ function page() {
           <div className='my-4 text-center font-semibold '>Products</div>
           <ul className='list-none flex flex-col gap-4 justify-center items-center'>
             {/* adjust time with only what is given and not based on key index */}
-            {products?.map((item, key) =>
+            {products?.length ?
+            products?.map((item, key) =>
               <li onClick={() => setSelectedProduct(item)} key={key} className='border-b-2 py-2'>{item.name}</li>
-            )}
+            ):
+          <><div>No products available</div></>
+          }
 
           </ul>
         </div>

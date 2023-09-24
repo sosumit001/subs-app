@@ -8,7 +8,9 @@ export const GlobalContextProvider=({children})=>{
         duration: '',
         licensePrice: 0,
         name: '',
-        durationPrice: 0
+        durationPrice: 0,
+        description: '',
+        subtotal: 0
       })
     
     return <>

@@ -12,7 +12,8 @@ function page() {
 
   const onSubscribe = async () => {
 
-   if(toPass?.subtotal == 0 ) return alert("please select license or go back and choose again")
+
+   if(toPass?.subtotal == 0 || Number.isNaN(toPass?.subtotal)) return alert("please select license or go back and choose again")
 
     const res = await getCheckout(toPass)
     console.log(res)

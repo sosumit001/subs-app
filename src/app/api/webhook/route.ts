@@ -24,13 +24,45 @@ export async function POST(req: Request) {
   const session = event.data.object as Stripe.Checkout.Session
 
   if (event.type === "checkout.session.completed") {
+
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
     )
 
     if (!session?.metadata?.userId) {
       return new NextResponse("User id is required", { status: 400 });
+
     }
+
+    let cancelSchedules = await stripe.subscriptionSchedules.create({
+      from_subscription: session.subscription as string,
+    })
+
+    const phases = cancelSchedules.phases.map(phase =>({
+      start_date: phase.start_date,
+      end_date: phase.end_date,
+      items: phase.items
+    }))
+
+    cancelSchedules = await stripe.subscriptionSchedules.update(
+      cancelSchedules.id,
+      {
+        end_behavior: 'cancel',
+        phases:[
+          ...phases,
+          {
+            items:[
+              {
+                price: subscription.items.data[0].price.id,
+                quantity: 1
+              }
+            ],
+            iterations: 3,
+          }
+        ]
+
+
+      })
 
     await prisma.userSubscription.create({
       data: {

@@ -49,7 +49,7 @@ async function getCheckoutUrl(toPass: any) {
   if (userSubscription && userSubscription.stripeCustomerId) {
     const stripeSession = await stripe.billingPortal.sessions.create({
       customer: userSubscription.stripeCustomerId,
-      return_url: 'http://localhost:3000/dashboard'
+      return_url: 'http://localhost:3000/dashboard', 
        
     })
 
@@ -68,10 +68,21 @@ async function getCheckoutUrl(toPass: any) {
         price_data: {
           currency: "USD",
           product_data: {
+            name: "License",
+            description: "One-time upfront payment"
+          },
+          unit_amount: 100 * 100, // Amount in cents
+        },
+        quantity: 1,
+      },
+      {
+        price_data: {
+          currency: "USD",
+          product_data: {
             name: toPass.name,
             description: "Create Custom AI Companions"
           },
-          unit_amount: toPass.subtotal,
+          unit_amount: toPass.subtotal * 100,
           recurring: {
             interval: "month"
           }

@@ -12,13 +12,8 @@ async function page() {
                 <div className='text-center'><Link href='/products' className='border-2 bg-black text-white px-4 py-2 rounded-md'>Explore Products</Link></div>
             </div> :
                 <div>
-                  
- 
-
-
+                    
                 </div>
-
-
             }
 
 

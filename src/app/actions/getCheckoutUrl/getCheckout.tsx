@@ -10,7 +10,7 @@ import { NextResponse } from "next/server";
 
 const settingsUrl = absoluteUrl("/dashboard");
 
-async function getCheckoutUrl(toPass: any) {
+async function getCheckoutUrl(toPass: any,num:number) {
   // const { toPass } = useGlobalContext()
 
   const session = await getServerSession(authOptions);
@@ -49,7 +49,7 @@ async function getCheckoutUrl(toPass: any) {
   if (userSubscription && userSubscription.stripeCustomerId) {
     const stripeSession = await stripe.billingPortal.sessions.create({
       customer: userSubscription.stripeCustomerId,
-      return_url: 'http://localhost:3000/dashboard', 
+      return_url: 'http://localhost:3000/dashboard'
        
     })
 
@@ -68,28 +68,35 @@ async function getCheckoutUrl(toPass: any) {
         price_data: {
           currency: "USD",
           product_data: {
-            name: "License",
-            description: "One-time upfront payment"
+            name: toPass.name,
+            description: " - " + toPass.description 
           },
-          unit_amount: 100 * 100, // Amount in cents
+          unit_amount: toPass.durationPrice*100,
+          recurring: {
+            interval: "month",
+          },
+        
         },
-        quantity: 1,
+        
+        quantity: num,
       },
       {
         price_data: {
           currency: "USD",
           product_data: {
-            name: toPass.name,
-            description: "Create Custom AI Companions"
+            name: 'license',
+            description: " - " + toPass.description 
           },
-          unit_amount: toPass.subtotal * 100,
-          recurring: {
-            interval: "month"
-          }
+          unit_amount: toPass.licensePrice*100,
         },
-        quantity: 1,
+        
+        quantity: num,
       },
+      
+    
     ],
+    
+  
     metadata: {
       userId,
     },

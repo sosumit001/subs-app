@@ -34,38 +34,57 @@ export async function POST(req: Request) {
 
     }
 
-    let cancelSchedules = await stripe.subscriptionSchedules.create({
-      from_subscription: session.subscription as string,
-    })
+    const productId = session.metadata.productId;
+    const stripePriceId = subscription.items.data[0].price.id
+  
 
-    const phases = cancelSchedules.phases.map(phase =>({
-      start_date: phase.start_date,
-      end_date: phase.end_date,
-      items: phase.items
-    }))
-
-    cancelSchedules = await stripe.subscriptionSchedules.update(
-      cancelSchedules.id,
-      {
-        end_behavior: 'cancel',
-        phases:[
-          ...phases,
-          {
-            items:[
-              {
-                price: subscription.items.data[0].price.id,
-                quantity: 1
-              }
-            ],
-            iterations: 3,
-          }
-        ]
+    //if the user already has a subscription for this product
+    // const existingSubscription = await prisma.userSubscription.findFirst({
+    //   where: {
+    //     userId: session.metadata.userId,
+    //     stripePriceId: stripePriceId,
+        
+    //   },
+    // })
+  
+    // if (existingSubscription) {
+    //   return new NextResponse("User already has a subscription for this product", { status: 400 });
+    // }
 
 
-      })
+    // let cancelSchedules = await stripe.subscriptionSchedules.create({
+    //   from_subscription: session.subscription as string,
+    // })
+
+    // const phases = cancelSchedules.phases.map(phase =>({
+    //   start_date: phase.start_date,
+    //   end_date: phase.end_date,
+    //   items: phase.items
+    // }))
+
+    // cancelSchedules = await stripe.subscriptionSchedules.update(
+    //   cancelSchedules.id,
+    //   {
+    //     end_behavior: 'cancel',
+    //     phases:[
+    //       ...phases,
+    //       {
+    //         items:[
+    //           {
+    //             price: subscription.items.data[0].price.id,
+    //             quantity: 1
+    //           }
+    //         ],
+    //         iterations: 3,
+    //       }
+    //     ]
+
+
+    //   })
 
     await prisma.userSubscription.create({
       data: {
+
         userId: session?.metadata?.userId,
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,

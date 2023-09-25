@@ -14,17 +14,23 @@ datasource db {
 model User {
   id String @id @default(cuid())
 
-  email        String         @unique
+  email        String       @unique
   passwordHash String
-  Subscription Subscription[]
+  isAdmin Boolean?
+  isStaff Boolean?
+  categories Category[]
+
 }
 
-model Staff {
-  id String @id @default(cuid())
-  email        String         @unique
-  passwordHash String
-  isAdmin Boolean
+model Category{
+  id Int @id @default(autoincrement())
+  productId  String
+  categoryType  String
+  user   User? @relation(fields: [userId], references: [id])
+  userId String
+  @@index([userId])
 }
+
 
 model Products {
   id                     Int       @id @default(autoincrement())
@@ -49,41 +55,6 @@ model ProductCategory {
   @@index([productID])
 }
 
-model Subscription {
-  id                     Int       @id @default(autoincrement())
-  dateOfFirstPayment     DateTime?
-  dateOfLicenseDelivery  DateTime?
-  dateOfLastMonthFeePaid DateTime?
-  amountPaid             Float?
-  paid                   Boolean?
-  monthlyActive          Boolean?
-  monthlyFee             String?
-  feeDueDate             DateTime?
-  nftDiscount            Boolean?
-  referralDiscount       Boolean?
-  experienced            Boolean?
-  broker                 String?
-  commentsDetails        String?
-  paymentTxHash          String?
-  channelID              String?
-  categoryID             String?
-  // Define the relationship with the User table
- 
-  user   User @relation(fields: [userID], references: [id])
-  userID String
-  @@index([userID])
-  License                License[]
-}
-
-model License {
-  id             Int          @id @default(autoincrement())
-  subscription   Subscription @relation(fields: [subscriptionID], references: [id])
-  @@index([subscriptionID])
-  subscriptionID Int
-  account        Int?
-  licenseNumber  Int?
-  ticketNumber   Int?
-}
 
 model UserSubscription{
   id                        String    @id @default(cuid())
@@ -92,4 +63,6 @@ model UserSubscription{
   stripeSubscriptionId      String?   @unique @map(name: "stripe_subscription_id")
   stripePriceId             String?   @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd    DateTime? @map(name: "stripe_current_period_end")
+  stripeProductId           String?   @map(name: "stripe_product_id")
 }
+

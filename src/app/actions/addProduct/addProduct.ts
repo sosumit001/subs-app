@@ -16,7 +16,7 @@ export async function addProduct (obj: any) {
             referral,
             categories: {
                 create: categories.map(category => ({
-                    name: category.name,
+                    // name: category.name,
                     oneMonthPrice: category.oneMonthPrice,
                     threeMonthPrice: category.threeMonthPrice,
                     sixMonthPrice: category.sixMonthPrice,

@@ -1,12 +1,11 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-// import { sub_plans } from './prices'
-// import { addProduct } from '@/app/actions/addProduct/addProduct'
 import { getProducts } from '@/app/actions/getProduct/getProduct'
+import { addUser } from '@/app/actions/UserActions/OperationsOnUser'
+import { Loader } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
-// import { useRouter } from 'next/navigation'
-import { Check } from 'lucide-react'
 
 
 interface Form {
@@ -22,13 +21,15 @@ interface Category {
 
 const error = ['minimum length of 8 characters', 'one uppercase letter', 'one special character', 'atleast one number', 'atleast one lowercase letter']
 
+const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+
 function Page() {
-    // const router = useRouter()
-    const [toggle, setToggle] = useState<boolean>(false)
-    const [loader, setLoader] = useState<string>('Add Product')
+    const router = useRouter()
+
+    const [loader, setLoader] = useState<boolean>(false)
     const [products, setProducts] = useState<any>([])
-    // const [categoryType, setCategoryType] = useState<string>('options')
-    // const checkboxesRef = useRef<(HTMLInputElement[] | null)>([]);
 
     const [form, setForm] = useState<Form>({
         email: '',
@@ -46,14 +47,37 @@ function Page() {
 
     }, [])
 
+    const handleSubmit = async (e: React.SyntheticEvent) => {
+        e.preventDefault();
+
+        if (emailRegex.test(form.email) && passwordRegex.test(form.password) && form.categories?.length) {
+            try {
+                setLoader(true)
+                const user = await addUser(form)
+                console.log(user, "log")
+                setLoader(false)
+
+            }
+            catch (err) {
+                console.log(err)
+                setLoader(false)
+                alert("Something went wrong. Try again!")
+            }
+        }
+
+        else {
+            alert('please fill the required fields properly')
+        }
+    }
+
     console.log(form)
     return (
         <div className="max-w-5xl m-auto p-4 h-full">
             <div className='text-center font-bold'>Add User</div>
             <form className='w-[50%] m-auto border-2 p-8 rounded-md flex flex-col justify-center items-center gap-4' >
                 <div className='flex flex-col w-[80%] '>
-                    <label htmlFor='email'>Name: </label>
-                    <input type='email' onChange={(e) => setForm({ ...form, email: e.target.value })} className='border-2 rounded-md p-2 ' id='email' name="email" placeholder='name' required />
+                    <label htmlFor='email'>Email: </label>
+                    <input type='email' onChange={(e) => setForm({ ...form, email: e.target.value })} className='border-2 rounded-md p-2 ' id='email' name="email" placeholder='email' required />
                 </div>
 
                 <div className='flex flex-col w-[80%]'>
@@ -90,26 +114,9 @@ function Page() {
                     </div>
                 )}
 
-                {/* <div className='flex flex-col'>
-                        <label htmlFor="category">Category</label>
-                        <select onChange={(e) => { setCategoryType(e.target.value); setAddCategoryItems({ ...addCategoryItems, name: e.target.value }) }} className='border-2 rounded-md p-2 max-w-[200px]' >
-                            <option value=""></option>
-                            {categories.map((item, key) => <option key={key} className='border-2 bg-slate-100' value={item}>{item}</option>)}
-                        </select>
-                    </div> */}
 
 
-                <button type='button' className=' w-[80%] bg-black text-white px-4 py-2 border-2 rounded flex justify-center items-center'
-                    onClick={() => {
-                        if (form?.categories?.length > 0) {
-                            setToggle(true);
-                        }
-                        else alert('fill the required fields');
-
-                    }
-                    }>Done {toggle && <Check size={15} />}</button>
-
-                {toggle && <button className='px-4 py-2 bg-black text-white rounded'>{loader}</button>}
+                <button onClick={(e) => handleSubmit(e)} className='flex items-center px-4 py-2 bg-black text-white rounded'>Add User {loader && <Loader size={15} color='white' />}</button>
 
             </form>
         </div >

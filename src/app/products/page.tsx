@@ -95,7 +95,6 @@ function page() {
                                     return Object.entries(item).map(([k, v]: [k: string, v: any]) => {
                                         if (k !== 'id' && k !== 'productID' && k !== 'name') {
                                             return <Card licensePrice={selectedProduct.licensePrice} name={selectedProduct.name} key={v} time={PassSelectedItem(k)} price={v} />
-
                                         }
 
                                     })

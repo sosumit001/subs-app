@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       from_subscription: session.subscription as string,
     })
 
-    const phases = cancelSchedules.phases.map(phase =>({
+    const phases = cancelSchedules.phases.map(phase => ({
       start_date: phase.start_date,
       end_date: phase.end_date,
       items: phase.items
@@ -48,10 +48,10 @@ export async function POST(req: Request) {
       cancelSchedules.id,
       {
         end_behavior: 'cancel',
-        phases:[
+        phases: [
           ...phases,
           {
-            items:[
+            items: [
               {
                 price: subscription.items.data[0].price.id,
                 quantity: 1
@@ -62,8 +62,10 @@ export async function POST(req: Request) {
         ]
 
 
-      })
+      }
+    )
 
+    console.log("subscription", subscription)
     await prisma.userSubscription.create({
       data: {
         userId: session?.metadata?.userId,

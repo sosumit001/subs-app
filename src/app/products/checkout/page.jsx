@@ -16,7 +16,7 @@ function page() {
    if(toPass?.subtotal == 0 || Number.isNaN(toPass?.subtotal)) return alert("please select license or go back and choose again")
 
     const res = await getCheckout(toPass)
-    console.log(res)
+    console.log('res' , res)
     window.location.href = res;
 
 

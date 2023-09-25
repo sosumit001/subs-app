@@ -54,63 +54,6 @@ function Page() {
         }
     )
 
-    useEffect(() => {
-        // Ensure checkboxesRef.current is not null before accessing it
-        if (checkboxesRef.current) {
-            checkboxesRef.current.forEach((checkbox: HTMLInputElement | null) => {
-                if (checkbox && checkbox.checked) {
-                    checkbox.checked = false;
-                }
-            });
-        }
-    }, [categoryType]);
-
-    const handleCheckboxChange = (key: any, checked: any) => {
-        const price = sub_plans[categoryType][key];
-
-        setAddCategoryItems((prevItems) => {
-            const updatedPrices = { ...prevItems };
-
-            if (checked) {
-                switch (time[key]) {
-                    case '1month':
-                        updatedPrices.oneMonthPrice = price;
-                        break;
-                    case '3month':
-                        updatedPrices.threeMonthPrice = price;
-                        break;
-                    case 'semi-annual':
-                        updatedPrices.sixMonthPrice = price;
-                        break;
-                    case 'yearly':
-                        updatedPrices.OneYearPrice = price;
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                switch (time[key]) {
-                    case '1month':
-                        updatedPrices.oneMonthPrice = null;
-                        break;
-                    case '3month':
-                        updatedPrices.threeMonthPrice = null;
-                        break;
-                    case 'semi-annual':
-                        updatedPrices.sixMonthPrice = null;
-                        break;
-                    case 'yearly':
-                        updatedPrices.OneYearPrice = null;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            return updatedPrices;
-        });
-    };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log("addCategory", addCategory, [...addCategory])

@@ -53,7 +53,7 @@ async function getCheckoutUrl(toPass: any,num:number) {
        
     })
 
-    return new NextResponse(JSON.stringify({ url: stripeSession.url }))
+    return stripeSession.url
   }
 
   const stripeSession = await stripe.checkout.sessions.create({

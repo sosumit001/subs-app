@@ -24,6 +24,7 @@ const Navbar = async () => {
                 </>
             ) : (
                 <>
+                    <Link href='/products'>Products</Link>
                     <Link href='/auth/signin'>Sign in</Link>
                     <Link href='/auth/signup'>Sign up</Link>
                 </>

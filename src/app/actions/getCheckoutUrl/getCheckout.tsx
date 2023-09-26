@@ -10,7 +10,7 @@ import { NextResponse } from "next/server";
 
 const settingsUrl = absoluteUrl("/dashboard");
 
-async function getCheckoutUrl(toPass: any, mode: string, licenseNum:any) {
+async function getCheckoutUrl(toPass: any, mode: string, licenseNum:any, pid=233) {
   // const { toPass } = useGlobalContext()
 
   const session = await getServerSession(authOptions);
@@ -30,14 +30,14 @@ async function getCheckoutUrl(toPass: any, mode: string, licenseNum:any) {
 
 
   if (!userId || !user) {
-    return new NextResponse("Unauthorized", { status: 401 });
+    return 'http://localhost:3000/products';
   }
 
   const userSubscription = await prisma.userSubscription.findFirst({
     where: {
       userId,
-      productId: toPass.productId
-    }
+      productId: toPass.productId || pid
+    } 
   })
 
   console.log('userSubs', userSubscription)

@@ -2,107 +2,75 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { checkSubscription } from '../lib/subscription'
-import { authOptions } from '../api/auth/[...nextauth]/route'
-import { getServerSession } from 'next-auth/next'
 import { getUser } from '../actions/UserActions/OperationsOnUser'
 import getCheckoutUrl from '../actions/getCheckoutUrl/getCheckout'
 import { getSubscribedProducts, getProductsUsingArray } from '../actions/getProduct/getProduct'
-import prisma from '../lib/prisma'
 import { useEffect, useState } from 'react'
+import { Loader } from 'lucide-react'
 
 
 
- function page() {
-     const [userid, setUserId] = useState<any>()
-     const [subproducts, setSubproducts] = useState<any[]>([])
-     const [finalProducts, setFinalProducts] = useState<any[]>([])
-     
-    useEffect(()=>{
-       async function getUserId(){
+
+function page() {
+    const [userid, setUserId] = useState<any>()
+    const [subproducts, setSubproducts] = useState<any[]>([])
+    const [finalProducts, setFinalProducts] = useState<any[]>([])
+
+    useEffect(() => {
+        async function getUserId() {
             const user = await getUser()
             setUserId(user?.id)
-       }
+        }
 
-       getUserId()
+        getUserId()
 
-    },[])
+    }, [])
 
-    useEffect(()=>{
-       async function getSubProducts(){
+    useEffect(() => {
+        async function getSubProducts() {
             const sp = await getSubscribedProducts(userid)
             setSubproducts(sp)
-       }
+        }
 
-       getSubProducts()
+        getSubProducts()
 
-    },[userid])
+    }, [userid])
 
-    useEffect(()=>{
-       async function getProducts(){
+    useEffect(() => {
+        async function getProducts() {
             const sp = await getProductsUsingArray(subproducts)
             setFinalProducts(sp)
-       }
+        }
 
-       getProducts()
+        getProducts()
 
-    },[subproducts])
+    }, [subproducts])
 
- console.log(userid, subproducts, finalProducts)
+    const handlePortal = async(id:any) =>{
+        const url = await getCheckoutUrl('a', 'b', 'c', id);  
+        window.location.href = url 
+    }
 
-    // const session = await getServerSession(authOptions)
-    
-    // if (!session?.user?.email) {
-    //     return false;
-    // }
-
-    // const user = await prisma.user.findUnique({
-    //     where: {
-    //         email: session?.user?.email as string
-    //     }
-    // })
-
-    // const subscribedProducts = await prisma.userSubscription.findMany({
-    //     where:{
-    //         userId: user?.id
-    //     }
-    // })
-
-    // const arrayOfIds = subscribedProducts.map(obj => obj.id);
-
-    // const products = await prisma.products.findMany({
-    //     where: {
-    //       id: {
-    //         in: arrayOfIds,
-    //       },
-    //     },
-    //   });
-
-    // console.log(subscribedProducts)
-
-    // const products = await getProducts()
-    // const isSubscribed = await checkSubscription()
+    // console.log(userid, subproducts, finalProducts)
 
     return (
         <>
-            <div>
-                {/* {isSubscribed ? */}
-                    <div className='flex gap-5'>
-                        {/* {products?.map((item: any, key: number) => {
-                            return <div key={key} className=' p-8 flex flex-col gap-4 items-center justify-center rounded-md w-[300px] h-[100px] border-2'>
-                                <span>{item.name}</span>
-                                <button className='px-4 py-2 rounded-md bg-black text-white'>Manage</button>
+            <div className='flex gap-4 w-[100%]'>
+                {finalProducts.length == 0 ? <Loader />
+                    // <div className='text-center '>
+                    //     <Image className='m-auto' src={'/empty-box.svg'} width={400} height={300} objectFit='cover' alt='nothing' />
+                    //     <button className='px-4 py-2 bg-black text-white rounded-md'>Explore Products</button>
+                    // </div>
+                    : <>
+                        {finalProducts?.map((item: any, key: number) => {
+                            return <div key={key} className='flex flex-col gap-4 items-center justify-center w-[200px] h-[150px] border-2 rounded-md'>
+                                <div>{item.name}</div>
+                                <button onClick={() => handlePortal(item.id)} className='px-4 py-2 bg-black text-white rounded-md'>Manage</button>
                             </div>
-                        })} */}
-                    </div>
+                        })}
+                    </>
 
-                    {/* : <>
-                    
-                        <Image className='m-auto' src="/empty-box.svg" width={500} height={500} objectFit='cover' alt="empty" />
-                        <div className='text-center'><Link href='/products' className='border-2 bg-black text-white px-4 py-2 rounded-md'>Explore Products</Link></div>
-                        
-
-                    </> */}
+                }
             </div>
         </>
     )

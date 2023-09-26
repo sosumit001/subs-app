@@ -14,6 +14,7 @@ export async function getProducts() {
   return products;
 }
 
+
 export async function getProductUsingId(productId:any) {
   const products = await prisma.products.findUnique({
       where:{

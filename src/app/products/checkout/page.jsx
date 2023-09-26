@@ -18,19 +18,6 @@ function page() {
     const res = await getCheckout(toPass,parseInt(license))
     console.log(res)
     window.location.href = res;
-
-
-    // const res = await getCheckout()
-    // console.log(res)
-    // try {
-    //   setLoading(true);
-    //   const response = await axios.get("/api/stripe");
-    //   window.location.href = response.data.url;
-    // } catch (error) {
-    //  console.log("error", error)
-    // } finally {
-    //   setLoading(false);
-    // }
   }
 
   console.log(license)

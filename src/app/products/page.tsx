@@ -5,8 +5,8 @@ import { useState, useEffect } from 'react'
 import Card from '../components/Card'
 import { Loader } from 'lucide-react'
 import { getProducts } from '../actions/getProduct/getProduct'
-import { getUser} from '../actions/UserActions/OperationsOnUser'
-
+import { getUser } from '../actions/UserActions/OperationsOnUser'
+// import {getProductCategoriesForUser} from '@/app/actions/getProduct/getProduct'
 
 
 // const categories = ['A / A-ML', 'B / B-ML', 'C / C-ML', 'D / D-ML', 'E / E-ML', 'F / F-ML']
@@ -46,43 +46,53 @@ function page() {
             try {
                 const res = await getUser();
                 setUser(res)
-                console.log('Fetched users:', res);
+                console.log('Fetched  users:', res);
             } catch (error) {
-                console.error('Error fetching users:', error);
+                console.error('Error user:', error);
             }
         }
-        
+
         fetchUser()
         fetchProducts();
     }, []);
 
-    console.log(category, products)
 
+    console.log(selectedProduct)
     return (
         <div className="max-w-5xl m-auto p-4">
 
             <div >
-                {/* <div className='p-4 border-2 rounded-md bg-gray-950 text-white'>
+                <div>
+                    
+                    {products?.map((item: any, key: number) => {
+                        return <div key={key} onClick={() => setSelectedProduct(item)}>
+                            {item.name}
+                        </div>
+                    })}
 
-                    <div className='my-4 text-center font-semibold '>Products</div>
-                    <ul className='list-none flex gap-4 justify-center items-center'>
-                        
-                        {products?.length ?
-                            products?.map((item, key) =>
-                                <li onClick={() => setSelectedProduct(item)} key={key} className={`cursor-pointer border-b-2 py-2`}>{item.name}</li>
-                            ) :
-                            <><Loader className='text-center' size={20} /></>
-                        }
+                </div>
 
-                    </ul>
-                </div> */}
 
 
                 <div className='p-4 border-2 rounded-md' >
 
-                    <div className=" rounded-md">
-
-                     
+                    <div className=" flex gap-4 flex-wrap rounded-md">
+                        {/* {selectedProduct?.categories?.map((item: any, key: number) => {
+                             if(item.name == 'A / A-ML')
+                            return Object.entries(item).map(([k, v]) => {
+                                console.log(k)
+                                if (k === 'oneMonthPrice' || k === 'threeMonthPrice' || k === 'sixMonthPrice' || k === 'oneYearPrice') {
+                                    return (
+                                        <div key={key} className='w-[250px] h-[150px] border-2 rounded-md flex flex-col justify-around p-4 items-center gap-4'>
+                                            <div>{PassSelectedItem(k)}</div>
+                                            <div>{v.toString()}</div>
+                                            <button onClick={} className='bg-black rounded-md px-4 py-2 text-white'>Subscribe</button>
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            });
+                        })} */}
                     </div>
 
                 </div>

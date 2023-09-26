@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 // import { useContext } from 'react';
 import { useGlobalContext } from '../Context/store';
 
-const Card = ({price, time, licensePrice, name}:{price:any, time: any, licensePrice: number, name: string}) => {
+const Card = (props:any) => {
 
     const {toPass, setToPass} = useGlobalContext()
     const router = useRouter()

@@ -54,6 +54,9 @@ export async function getUser() {
 	// const {user} = session;
  
 	const user = await prisma.user.findUnique({
+		include:{
+           categories: true
+		},
 		where:{
 			email: session?.user?.email as string
 		}

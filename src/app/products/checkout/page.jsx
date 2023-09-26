@@ -8,6 +8,7 @@ function page() {
   const [loading, setLoading] = useState(false)
   const [license, setlicense] = useState('')
   const { toPass, setToPass } = useGlobalContext()
+  const mode = "payment"
   console.log(toPass)
 
   const onSubscribe = async () => {
@@ -15,7 +16,7 @@ function page() {
 
    if(toPass?.subtotal == 0 || Number.isNaN(toPass?.subtotal)) return alert("please select license or go back and choose again")
 
-    const res = await getCheckout(toPass,parseInt(license))
+    const res = await getCheckout(toPass,parseInt(license),mode)
     console.log(res)
     window.location.href = res;
   }
@@ -47,7 +48,7 @@ function page() {
 
       <div className="flex justify-between">
         <span>subtotal</span>
-        <span>{parseInt(license)?(toPass.licensePrice * parseInt(license) + "$ license + " +toPass.durationPrice* parseInt(license) + "$ " + "/mon"): "../"}  </span>
+        <span>{parseInt(license)?(toPass.licensePrice * parseInt(license) + "$ license + " +toPass.durationPrice* parseInt(license) + "$ "): "../"}  </span>
       </div>
 
       <button className="p-2 w-[100%] bg-black text-white rounded-md" disabled={loading} onClick={onSubscribe}>Checkout</button>

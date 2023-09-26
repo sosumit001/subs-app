@@ -30,3 +30,15 @@ export async function addProduct (obj: any) {
 
     return product;
 }
+
+export async function getProductById(id: string|undefined) {
+	const product = await prisma.products.findUnique({
+      where: {
+		id: id
+	  }
+	});
+  
+	return product;
+  }
+  
+

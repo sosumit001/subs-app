@@ -12,7 +12,7 @@ import { getProducts } from '../actions/getProduct/getProduct'
 
 
 async function page() {
-    // await checkAuth();
+    await checkAuth();
     // const session = await getServerSession(authOptions)
 
     // if (!session?.user?.email) {

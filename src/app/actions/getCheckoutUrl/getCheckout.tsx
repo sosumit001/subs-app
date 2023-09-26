@@ -150,8 +150,13 @@ async function getCheckoutUrl(toPass: any,num:number, mode:string) {
       },
     })
   
-    return stripeSession.url;
-  }
+
+    metadata: {
+    productId:toPass.productId,
+    },
+  })
+
+  return stripeSession.url;
 
   //   } catch (error) {
   //     console.log("[STRIPE]", error);

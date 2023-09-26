@@ -7,28 +7,54 @@ import { getServerSession } from 'next-auth';
 export async function getProducts() {
   const products = await prisma.products.findMany({
     include: {
-      categories:true
+      categories: true
     }
   });
 
   return products;
 }
 
-
-export async function getProductUsingId(productId:any) {
+export async function getProductUsingId(productId: any) {
   const products = await prisma.products.findUnique({
-      where:{
-        id: productId
-      }
+    where: {
+      id: productId
+    }
   });
 
   return products;
 }
 
+export async function getSubscribedProducts(id: any) {
+  const products = await prisma.userSubscription.findMany({
+    where: {
+      userId: id
+    }
+  });
+
+  return products;
+}
+
+export async function getProductsUsingArray(array: any) {
+  const arrayOfIDs = array.map(obj => obj.id);
+
+  const products = await prisma.products.findMany({
+    where: {
+      id: {
+        in: arrayOfIDs,
+      },
+    },
+  });
+
+
+  return products;
+}
+
+
+
 export async function getProductCategoriesForUser() {
   // Assuming you have the user's email available in `session`
   const session = await getServerSession(authOptions);
-  
+
   // Find the user along with their categories
   const user = await prisma.user.findUnique({
     include: {

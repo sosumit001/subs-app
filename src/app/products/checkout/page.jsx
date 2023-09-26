@@ -4,24 +4,26 @@ import { useGlobalContext } from '@/app/Context/store';
 import { useState } from 'react';
 import getCheckout from '@/app/actions/getCheckoutUrl/getCheckout';
 
+
 function page() {
   const [loading, setLoading] = useState(false)
   const [license, setlicense] = useState('')
+  const [mode, setMode] = useState('')
+  const [licenseNum, setLicenseNum] = useState(1)
   const { toPass, setToPass } = useGlobalContext()
-  const mode = "payment"
   console.log(toPass)
 
   const onSubscribe = async () => {
 
 
-   if(toPass?.subtotal == 0 || Number.isNaN(toPass?.subtotal)) return alert("please select license or go back and choose again")
+    if (toPass?.subtotal == 0 || Number.isNaN(toPass?.subtotal)) return alert("please select license or go back and choose again")
 
-    const res = await getCheckout(toPass,parseInt(license),mode)
+    const res = await getCheckout(toPass, mode, licenseNum)
     console.log(res)
     window.location.href = res;
   }
 
-  console.log(license)
+  console.log('mode', mode)
   return (
     <div className="border-2 rounded-md p-8 shadow-md w-[500px] h-[400px] absolute translate-x-[-50%] translate-y-[-50%] left-[50%] top-[50%] flex flex-col gap-4">
 
@@ -33,7 +35,11 @@ function page() {
       <div>
         <span  >Licence</span>
         <select onChange={(e) => {
-          setToPass((toPass) => ({ ...toPass, subtotal: ( parseInt(e.target.value) * toPass.licensePrice) }));
+
+          setToPass((toPass) => ({ ...toPass, subtotal: (parseInt(e.target.value) * toPass.licensePrice) }));
+
+          setLicenseNum(parseInt(e.target.value));
+
           return setlicense(e.target.value);
         }} className="border-2 rounded-md p-2 ml-2" name="license" id="license">
           <option value={''}></option>
@@ -44,11 +50,23 @@ function page() {
           <option value="5">5</option>
         </select>
       </div>
-      <hr />
 
+      <div>
+      Mode: 
+        <select className="border-2 rounded-md p-2 ml-2" onChange={(e) => {
+          setMode(e.target.value) 
+        }}
+          name="mode" id="">
+          <option value={''}></option>
+          <option value='subscription'>subscription</option>
+          <option value='payment'>on-time</option>
+        </select>
+      </div>
+      <hr />
+     
       <div className="flex justify-between">
         <span>subtotal</span>
-        <span>{parseInt(license)?(toPass.licensePrice * parseInt(license) + "$ license + " +toPass.durationPrice* parseInt(license) + "$ "): "../"}  </span>
+        <span>{parseInt(license) ? (toPass.licensePrice * parseInt(license) + "$ license + " + toPass.durationPrice * parseInt(license) + "$ ") : "../"}  </span>
       </div>
 
       <button className="p-2 w-[100%] bg-black text-white rounded-md" disabled={loading} onClick={onSubscribe}>Checkout</button>

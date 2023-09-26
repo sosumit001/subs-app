@@ -10,7 +10,7 @@ import { NextResponse } from "next/server";
 
 const settingsUrl = absoluteUrl("/dashboard");
 
-async function getCheckoutUrl(toPass: any,num:number) {
+async function getCheckoutUrl(toPass: any,num:number, mode:string) {
   // const { toPass } = useGlobalContext()
 
   const session = await getServerSession(authOptions);
@@ -38,9 +38,10 @@ async function getCheckoutUrl(toPass: any,num:number) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const userSubscription = await prisma.userSubscription.findUnique({
+  const userSubscription = await prisma.userSubscription.findFirst({
     where: {
-      userId
+      userId,
+      stripePriceId:""
     }
   })
 
@@ -53,50 +54,103 @@ async function getCheckoutUrl(toPass: any,num:number) {
        
     })
 
-    return stripeSession.url
+    return new NextResponse(JSON.stringify({ url: stripeSession.url }))
   }
 
-  const stripeSession = await stripe.checkout.sessions.create({
-    success_url: settingsUrl,
-    cancel_url: settingsUrl,
-    payment_method_types: ["card"],
-    mode: "subscription",
-    billing_address_collection: "auto",
-    customer_email: user.email,
-    line_items: [
-      {
-        price_data: {
-          currency: "USD",
-          product_data: {
-            name: toPass.name,
-            description: " - " + toPass.description 
+  if(mode == "subscription") {
+    const stripeSession = await stripe.checkout.sessions.create({
+      success_url: settingsUrl,
+      cancel_url: settingsUrl,
+      payment_method_types: ["card"],
+      mode:"subscription",
+      billing_address_collection: "auto",
+      customer_email: user.email,
+      line_items: [
+        {
+          price_data: {
+            currency: "USD",
+            product_data: {
+              name: toPass.name,
+              description: " - " + toPass.description 
+            },
+            unit_amount: toPass.durationPrice*100,
+            recurring: {
+              interval: "month",
+              interval_count:toPass.duration
+            },
+          
           },
-          unit_amount: toPass.durationPrice*100,
-          recurring: {
-            interval: "month",
+          
+          quantity: num,
+        },
+        {
+          price_data: {
+            currency: "USD",
+            product_data: {
+              name: 'license',
+              description: " - " + toPass.description 
+            },
+            unit_amount: toPass.licensePrice*100,
           },
-        
+          
+          quantity: num,
         },
         
-        quantity: num,
-      },
-      {
-        price_data: {
-          currency: "USD",
-          product_data: {
-            name: 'license',
-            description: " - " + toPass.description 
-          },
-          unit_amount: toPass.licensePrice*100,
-        },
-        
-        quantity: num,
-      },
+      
+      ],
       
     
-    ],
-    
+      metadata: {
+        userId,
+      },
+    })
   
+    return stripeSession.url;
+  } else {
+    const stripeSession = await stripe.checkout.sessions.create({
+      success_url: settingsUrl,
+      cancel_url: settingsUrl,
+      payment_method_types: ["card"],
+      mode:"payment",
+      billing_address_collection: "auto",
+      customer_email: user.email,
+      line_items: [
+        {
+          price_data: {
+            currency: "USD",
+            product_data: {
+              name: toPass.name,
+              description: " - " + toPass.description 
+            },
+            unit_amount: toPass.durationPrice*100,
+          
+          },
+          
+          quantity: num,
+        },
+        {
+          price_data: {
+            currency: "USD",
+            product_data: {
+              name: 'license',
+              description: " - " + toPass.description 
+            },
+            unit_amount: toPass.licensePrice*100,
+          },
+          
+          quantity: num,
+        },
+        
+      
+      ],
+      
+    
+      metadata: {
+        userId,
+      },
+    })
+  
+
     metadata: {
     productId:toPass.productId,
     },

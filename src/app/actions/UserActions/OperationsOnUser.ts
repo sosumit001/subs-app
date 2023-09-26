@@ -76,4 +76,28 @@ export async function getUser() {
 
   }
 
+  export async function updateUser(form:any, path:string) {
+	const passwordHash = bcrypt.hashSync(form.password, 10);
 
+
+	const user = await prisma.user.update({
+		where: {
+			id: path.split('/').pop(),
+			email:form.email
+		},
+		data: {
+			
+			email: form.email,
+			passwordHash,
+		
+			categories:  {
+				create: form.categories.map((category: any) => ({
+					productId : category.productId as string,
+					categoryType: category.categoryType
+				}))
+			}
+		}
+	})
+
+	return user
+  } 

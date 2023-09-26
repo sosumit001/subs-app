@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { checkSubscription } from '../lib/subscription'
-import { checkAuth } from '../lib/checkAuth'
+// import { checkAuth } from '../lib/checkAuth'
 // import prisma from '../lib/prisma'
 // import { authOptions } from '../api/auth/[...nextauth]/route'
 // import { getServerSession } from 'next-auth'
@@ -12,7 +12,7 @@ import { getProducts } from '../actions/getProduct/getProduct'
 
 
 async function page() {
-    await checkAuth();
+    // await checkAuth();
     // const session = await getServerSession(authOptions)
 
     // if (!session?.user?.email) {

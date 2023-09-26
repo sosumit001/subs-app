@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { getProducts } from '@/app/actions/getProduct/getProduct'
-import { addUser, getUserById } from '@/app/actions/UserActions/OperationsOnUser'
+import { addUser, getUserById, updateUser } from '@/app/actions/UserActions/OperationsOnUser'
 import { Loader } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
@@ -71,8 +71,8 @@ function Page() {
         if (emailRegex.test(form.email) && passwordRegex.test(form.password) && form.categories?.length) {
             try {
                 setLoader(true)
-                const user = await addUser(form)
-                console.log(user, "log")
+                const user = await updateUser(form,path)
+                console.log('user updated in db: ',user)
                 setLoader(false)
 
             }

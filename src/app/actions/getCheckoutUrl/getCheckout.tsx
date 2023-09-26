@@ -143,20 +143,20 @@ async function getCheckoutUrl(toPass: any,num:number, mode:string) {
         
       
       ],
+       
       
-    
-      metadata: {
-        userId,
-      },
-    })
-  
-
     metadata: {
     productId:toPass.productId,
     },
-  })
+   
+    })
+  
+ return stripeSession.url;
 
-  return stripeSession.url;
+  }
+
+  
+
 
   //   } catch (error) {
   //     console.log("[STRIPE]", error);

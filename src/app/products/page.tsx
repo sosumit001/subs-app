@@ -1,7 +1,7 @@
 'use client'
 
 // import {sub_plans} from '../../products/add-product/prices'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import Card from '../components/Card'
 import { Loader } from 'lucide-react'
 import { getProducts } from '../actions/getProduct/getProduct'
@@ -26,49 +26,52 @@ function PassSelectedItem(value: string | any) {
     }
 }
 function page() {
-    const [selectedProduct, setSelectedProduct] = useState<any>({})
-    const [category, setCategory] = useState<string>('options')
-    const [products, setProducts] = useState<any[]>([])
-    const [user, setUser] = useState<any>({})
+    // const [selectedProduct, setSelectedProduct] = useState<any>({})
+    // const [category, setCategory] = useState<string>('options')
+    // const [products, setProducts] = useState<any[]>([])
+    // const [user, setUser] = useState<any>({})
 
     useEffect(() => {
-        async function fetchProducts() {
-            try {
-                const res = await getProducts();
-                setProducts(res)
-                console.log('Fetched products:', res);
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            }
+        async function getCategories() {
+            const products = await getProducts();
+            const user = await getUser();
+        
+            const userCategories:any = user?.categories;
+        
+            const selectedCategories = userCategories.map(userCategory => {
+                const { productId, categoryType } = userCategory;
+                const product = products.find(product => product.id === productId);
+        
+                if (product) {
+                    const category = product.categories.find(category => category.name === categoryType);
+                    return {
+                        matchedCategory:category,
+                        productName:product.name
+                    };
+                }
+        
+                return null;
+            });
+        
+            console.log('Selected Categories : ', selectedCategories);
         }
-
-        async function fetchUser() {
-            try {
-                const res = await getUser();
-                setUser(res)
-                console.log('Fetched  users:', res);
-            } catch (error) {
-                console.error('Error user:', error);
-            }
-        }
-
-        fetchUser()
-        fetchProducts();
+        
+        getCategories();
+  
     }, []);
 
 
-    console.log(selectedProduct)
     return (
         <div className="max-w-5xl m-auto p-4">
 
             <div >
                 <div>
                     
-                    {products?.map((item: any, key: number) => {
+                    {/* {products?.map((item: any, key: number) => {
                         return <div key={key} onClick={() => setSelectedProduct(item)}>
                             {item.name}
                         </div>
-                    })}
+                    })} */}
 
                 </div>
 

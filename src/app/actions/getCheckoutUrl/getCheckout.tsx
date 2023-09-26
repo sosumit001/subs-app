@@ -98,7 +98,7 @@ async function getCheckoutUrl(toPass: any,num:number) {
     
   
     metadata: {
-      userId,
+    productId:toPass.productId,
     },
   })
 

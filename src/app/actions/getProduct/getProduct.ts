@@ -35,13 +35,17 @@ export async function getSubscribedProducts(id: any) {
 }
 
 export async function getProductsUsingArray(array: any) {
-  const arrayOfIDs = array.map(obj => obj.id);
+
+  const arrayOfIDs = array.map((obj:any) => {
+       console.log(obj)
+       return obj.productId
+  });
 
   const products = await prisma.products.findMany({
     where: {
-      id: {
-        in: arrayOfIDs,
-      },
+      id:{
+        in:arrayOfIDs
+      }
     },
   });
 

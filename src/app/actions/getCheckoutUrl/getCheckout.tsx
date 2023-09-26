@@ -10,7 +10,7 @@ import { NextResponse } from "next/server";
 
 const settingsUrl = absoluteUrl("/dashboard");
 
-async function getCheckoutUrl(toPass: any,num:number, mode:string) {
+async function getCheckoutUrl(toPass: any, mode: string, licenseNum:any) {
   // const { toPass } = useGlobalContext()
 
   const session = await getServerSession(authOptions);
@@ -27,12 +27,7 @@ async function getCheckoutUrl(toPass: any,num:number, mode:string) {
 
   console.log('userId', userId)
 
-  // if (!session?.user?.email) {
-  //   return false;
-  // }
 
-  // const { userId } = auth();
-  // const user = await currentUser();
 
   if (!userId || !user) {
     return new NextResponse("Unauthorized", { status: 401 });
@@ -41,28 +36,33 @@ async function getCheckoutUrl(toPass: any,num:number, mode:string) {
   const userSubscription = await prisma.userSubscription.findFirst({
     where: {
       userId,
-      stripePriceId:""
+      productId: toPass.productId
     }
   })
 
   console.log('userSubs', userSubscription)
 
   if (userSubscription && userSubscription.stripeCustomerId) {
+    console.log("/??")
     const stripeSession = await stripe.billingPortal.sessions.create({
       customer: userSubscription.stripeCustomerId,
       return_url: 'http://localhost:3000/dashboard'
-       
+
     })
 
-    return new NextResponse(JSON.stringify({ url: stripeSession.url }))
+    return stripeSession.url
   }
 
-  if(mode == "subscription") {
+  // console.log(mode, toPass.)
+
+  console.log("?")
+  if (mode == "subscription") {
+    console.log('insubs')
     const stripeSession = await stripe.checkout.sessions.create({
       success_url: settingsUrl,
       cancel_url: settingsUrl,
       payment_method_types: ["card"],
-      mode:"subscription",
+      mode: "subscription",
       billing_address_collection: "auto",
       customer_email: user.email,
       line_items: [
@@ -71,47 +71,53 @@ async function getCheckoutUrl(toPass: any,num:number, mode:string) {
             currency: "USD",
             product_data: {
               name: toPass.name,
-              description: " - " + toPass.description 
+              description: " - " + toPass.description
             },
-            unit_amount: toPass.durationPrice*100,
+            unit_amount: toPass.durationPrice * 100,
             recurring: {
               interval: "month",
-              interval_count:toPass.duration
+              interval_count: toPass.duration
             },
-          
+
           },
-          
-          quantity: num,
+
+          quantity: licenseNum,
         },
         {
           price_data: {
             currency: "USD",
             product_data: {
               name: 'license',
-              description: " - " + toPass.description 
+              description: " - " + toPass.description
             },
-            unit_amount: toPass.licensePrice*100,
+            unit_amount: toPass.licensePrice * 100,
           },
-          
-          quantity: num,
+
+          quantity: licenseNum,
         },
-        
-      
+
+
       ],
-      
-    
+
+
       metadata: {
         userId,
+        productId: toPass.productId,
       },
     })
-  
+
     return stripeSession.url;
-  } else {
+  }
+  
+  console.log("mode", mode)
+
+  if (mode == "payment") {
+    console.log("inpay")
     const stripeSession = await stripe.checkout.sessions.create({
       success_url: settingsUrl,
       cancel_url: settingsUrl,
       payment_method_types: ["card"],
-      mode:"payment",
+      mode: "payment",
       billing_address_collection: "auto",
       customer_email: user.email,
       line_items: [
@@ -120,115 +126,42 @@ async function getCheckoutUrl(toPass: any,num:number, mode:string) {
             currency: "USD",
             product_data: {
               name: toPass.name,
-              description: " - " + toPass.description 
+              description: " - " + toPass.description
             },
-            unit_amount: toPass.durationPrice*100,
-          
+            unit_amount: toPass.durationPrice * 100,
+
           },
-          
-          quantity: num,
+
+          quantity: licenseNum,
         },
         {
           price_data: {
             currency: "USD",
             product_data: {
               name: 'license',
-              description: " - " + toPass.description 
+              description: " - " + toPass.description
             },
-            unit_amount: toPass.licensePrice*100,
+            unit_amount: toPass.licensePrice * 100,
           },
-          
-          quantity: num,
+
+          quantity: licenseNum,
         },
-        
-      
+
+
       ],
-      
-    
+
+
       metadata: {
-        userId,
+        userId: userId,
+        productId: toPass.productId,
       },
     })
+
+    return stripeSession.url;
+  }
   
+  console.log("outoutout")
 
-    metadata: {
-    productId:toPass.productId,
-    },
-  })
-
-  return stripeSession.url;
-
-  //   } catch (error) {
-  //     console.log("[STRIPE]", error);
-  //     return new Error('error')
-  //   }
-  // const successUrl = absoluteUrl("/success"); // Set your success URL
-  // const cancelUrl = absoluteUrl("/cancel");   // Set your cancel 
-  // const authSession = await getServerSession(authOptions)
-
-  // const user = await prisma.user.findUnique({
-  //     where:{
-  //         email: authSession?.user?.email as string
-  //     }
-  // })
-
-
-
-  // const session = await stripe.checkout.sessions.create({
-  //     payment_method_types: ['card'],
-
-  //     line_items: [{
-
-  //             price_data: {
-
-  //               currency: "USD",
-  //               product_data: {
-  //                 name: "Companion Pro",
-  //                 description: "Create Custom AI Companions"
-
-  //               },
-  //               unit_amount: 99,
-  //               recurring: {
-  //                 interval: "month",
-  //                 interval_count: 1
-
-  //               },
-
-
-  //             },
-
-
-  //             quantity: 1,
-
-  //     },{
-
-  //         price_data: {
-  //           currency: "USD",
-  //           product_data: {
-  //             name: "license",
-  //             description: "License Selected for "
-
-  //           },
-  //           unit_amount: 130,
-
-  //         },
-
-  //         quantity: 1,
-
-  // }],
-  //     metadata: {
-  //         user.id
-
-  //     },
-
-  //     mode: 'subscription',
-  //     success_url: absoluteUrl('/dashboard'),
-  //     cancel_url: absoluteUrl('/dashboard'),
-  //     shipping_address_collection : undefined
-  // });
-
-
-
-  // Return the URL of the session
 }
-export default getCheckoutUrl
+
+export default getCheckoutUrl;

@@ -29,19 +29,17 @@ export async function POST(req: Request) {
       session.subscription as string
     )
 
-    if (!session?.metadata?.userId) {
+    if (!session?.metadata?.userId && !session?.metadata?.productId) {
       return new NextResponse("User id is required", { status: 400 });
 
     }
 
-    const productId = session.metadata.productId;
-    const stripePriceId = subscription.items.data[0].price.id
-  
+    const productId = session?.metadata?.productId;
 
     console.log("subscription", subscription)
     await prisma.userSubscription.create({
       data: {
-
+        productId: productId,
         userId: session?.metadata?.userId,
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,

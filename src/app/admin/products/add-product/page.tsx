@@ -71,6 +71,7 @@ function Page() {
             }
             catch (err) {
                 setLoader('Add Product')
+                console.log('error: ',err)
                 alert('something went wrong. Try again')
             }
         } else {

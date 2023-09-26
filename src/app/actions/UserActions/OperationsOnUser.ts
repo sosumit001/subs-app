@@ -11,12 +11,13 @@ export async function addUser( form : any) {
 
 	const user = await prisma.user.create({
 		data: {
+			
 			email: form.email,
 			passwordHash,
 		
 			categories:  {
 				create: form.categories.map(category => ({
-					productId : category.productId,
+					productId : category.productId as string,
 					categoryType: category.categoryType
 				}))
 			}

@@ -71,7 +71,7 @@ const DashboardPage = () => {
             <div className="overflow-y-scroll h-[500px] w-[100%] p-4 border-2">
               <div className='flex gap-4'>Users
                 <span>Add User </span>
-                <Link className='cursor-pointer w-[30px] h-[30px] rounded-full bg-zinc-900 grid place-content-center shadow-lg' href={'/admin/products'}><Plus color='white' size={20} /></Link>
+                <Link className='cursor-pointer w-[30px] h-[30px] rounded-full bg-zinc-900 grid place-content-center shadow-lg' href={'/admin/users/add-user'}><Plus color='white' size={20} /></Link>
               </div>
               {users?.length > 0 ? users?.map((item, key) => {
                 return <div key={key} className="flex mb-2 mt-4 justify-between p-4 border-2 shadow-md rounded-md">
